@@ -31,12 +31,12 @@ def command_ayuda(m):
 
 
 @bot.message_handler(commands=['getdata'])
-def command_activar(m):
+def command_getdata(m):
 	cid = m.chat.id
 	print("Comando: "+m.text) 
 	
 	data = getData()
-	print("Send data: "+data)
+	print("Send data: "+str(data))
 	bot.send_message( cid, data)
 
 	

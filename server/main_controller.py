@@ -18,12 +18,35 @@ def start(self):
 		
 def getData():
 	print("getData()")
-	return "esto es el getData()"
+	arduino = serial.Serial('COM3', 9600, timeout=0)
+	time.sleep(2) #Ncesario antes de escribir en el puerto serie
+	arduino.write('G'.encode('ascii')) #Le indicamos a Arduino que queremos hacer una lectura ('G')
+	#time.sleep(2) #Ncesario antes de escribir en el puerto serie
+
+	received = 0
+	while (received == 0):
+		if arduino.inWaiting() > 0:
+			time.sleep(2) #Este sleep es necesario antes de leer, si no no se lee el mensaje completo.
+
+			myData = arduino.readline()
+			print("mydata...")
+			print(myData.decode())
+			arduino.close()
+			received = 1
+			return myData.decode()
+
+
+
+	
 
 def setData(pin,mode):
 	print("setData: "+pin+" - "+mode) 
 	arduino = serial.Serial('COM3', 9600, timeout=0)
 	time.sleep(2) #Ncesario antes de escribir en el puerto serie
+
+	arduino.write('G'.encode('ascii')) #Le indicamos a Arduino que queremos hacer una lectura ('G')
+	time.sleep(0.1)
+
 	message = str(pin)+''+str(mode)
 	arduino.write(message.encode('ascii'))
 	

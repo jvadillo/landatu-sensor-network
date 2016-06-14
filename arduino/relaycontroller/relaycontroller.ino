@@ -12,12 +12,14 @@
   Connect GND on Arduino to GND on Relay Module
   Connect GND on Arduino to the Common Terminal (middle terminal) on Relay Module. */
 
+#include "DHT.h"
+#define DHTPIN 8
+#define DHTTYPE DHT11 
+DHT dht(DHTPIN, DHTTYPE);
 
 #define RELAY1  6                        
 #define RELAY2  7 
 
-int command;
-int state = 0; //TODO: define states.
 
 void setup() {
   // Initialise the Arduino data pins for OUTPUT
@@ -30,21 +32,31 @@ void setup() {
 void loop() {
 
   if(Serial.available() > 0) {
-    
-    char pin = Serial.read();
-    char mode = Serial.read();
-    Serial.print("PIN:");
-    Serial.print(pin);
-    Serial.print("MODE:");
-    Serial.print(mode);
-    
-    switch(pin) {
-      case '6':
-        setDigialPin(RELAY1,mode);   // Turns Relay Off
-        break;
-      case '7':
-        setDigialPin(RELAY2,mode);    // Turns ON Relays 1
-        break;
+
+    char action = Serial.read();
+    if(action == 'G') {
+      int hum = dht.readHumidity();// Lee la humedad
+      int temp= dht.readTemperature();//Lee la temperatura
+
+      String message = "Humedad Relativa: " + String(hum) + " -- Temperatura: " + String(temp) + "C";
+      Serial.println(message);                           
+    }
+    else if(action == 'S') {
+      char pin = Serial.read();
+      char mode = Serial.read();
+      Serial.print("PIN:");
+      Serial.print(pin);
+      Serial.print("MODE:");
+      Serial.print(mode);
+      
+      switch(pin) {
+        case '6':
+          setDigialPin(RELAY1,mode);   // Turns Relay Off
+          break;
+        case '7':
+          setDigialPin(RELAY2,mode);    // Turns ON Relays 1
+          break;
+      }
     }
   }
   delay(500);
