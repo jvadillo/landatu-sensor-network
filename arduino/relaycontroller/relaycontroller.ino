@@ -23,7 +23,6 @@ void setup() {
   // Initialise the Arduino data pins for OUTPUT
   pinMode(RELAY1, OUTPUT);       
   pinMode(RELAY2, OUTPUT);
-  digitalWrite(RELAY1,HIGH);   // Turns Relay Off
 
   Serial.begin(9600);
 }
@@ -31,17 +30,34 @@ void setup() {
 void loop() {
 
   if(Serial.available() > 0) {
-
-    char mode = Serial.read();
     
-    switch(mode) {
-      case '1':
-        digitalWrite(RELAY1,HIGH);   // Turns Relay Off
+    char pin = Serial.read();
+    char mode = Serial.read();
+    Serial.print("PIN:");
+    Serial.print(pin);
+    Serial.print("MODE:");
+    Serial.print(mode);
+    
+    switch(pin) {
+      case '6':
+        setDigialPin(RELAY1,mode);   // Turns Relay Off
         break;
-      case '0':
-        digitalWrite(RELAY1,LOW);    // Turns ON Relays 1
+      case '7':
+        setDigialPin(RELAY2,mode);    // Turns ON Relays 1
         break;
     }
   }
   delay(500);
 }
+
+void setDigialPin(int pin,int mode){
+  switch(mode) {
+    case '1':
+      digitalWrite(pin,HIGH);   // Turns Relay Off
+      break;
+    case '0':
+      digitalWrite(pin,LOW);    // Turns ON Relays 1
+      break;
+  }
+}
+
